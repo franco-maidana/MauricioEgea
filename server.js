@@ -14,6 +14,7 @@ const server = express();
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 server.use("/avatars", express.static("public/avatars"));
+server.use("/products", express.static("public/products"));
 server.use(cookieParser());
 server.use(cors());
 
