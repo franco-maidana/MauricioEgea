@@ -8,7 +8,6 @@ import {
 } from "../../controllers/Usuario.controllers.js";
 import uploadAvatar from "../../middlewares/upLoadAvatar.js";
 
-
 const Usuario = Router()
 
 Usuario.post('/create', CrearUsuarioControllers);
