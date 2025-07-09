@@ -1,5 +1,8 @@
 import { Router } from "express";
+import Usuario from "./Usuario.router.js";
 
-const ApiRouter = Router()
+const ApiRouter = Router();
 
-export default ApiRouter
+ApiRouter.use("/users", Usuario);
+
+export default ApiRouter;

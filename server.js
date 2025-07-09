@@ -13,6 +13,7 @@ const server = express();
 // 2. Middlewares globales
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
+server.use("/avatars", express.static("public/avatars"));
 server.use(cookieParser());
 server.use(cors());
 
