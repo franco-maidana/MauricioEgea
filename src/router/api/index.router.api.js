@@ -7,6 +7,6 @@ const ApiRouter = Router();
 
 ApiRouter.use("/users", Usuario);
 ApiRouter.use('/productos', Productos);
-ApiRouter.use('/orders', Carrito);
+ApiRouter.use('/carrito', Carrito);
 
 export default ApiRouter;
