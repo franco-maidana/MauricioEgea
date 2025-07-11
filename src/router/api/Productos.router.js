@@ -6,7 +6,6 @@ import {
   ModificarProductoController,
   SubirImagenProductoController
 } from "../../controllers/Producto.controllers.js";
-// import upLoadProductImage from "../../middlewares/upLoadProductImage.js";
 import uploadCloudinaryImage from "../../middlewares/uploadCloudinaryImage.js";
 
 const Productos = Router();
