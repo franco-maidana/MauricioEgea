@@ -1,34 +1,50 @@
-import * as ProductoService from '../services/Productos.service.js'
-import * as ProductoModel from '../models/Productos.model.js'
-
+import { v2 as cloudinary } from "cloudinary";
+import * as ProductoService from "../services/Productos.service.js";
+import * as ProductoModel from "../models/Productos.model.js";
 
 // listo
 export async function CrearProductoController(req, res, next) {
   try {
-    const imagen_url = req.file ? `/products/${req.file.filename}` : null;
-    // 👇 Asegurate de leer los campos desde req.body
+    let imagen_url = null;
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: "productos" }, (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          })
+          .end(req.file.buffer);
+      });
+      imagen_url = result.secure_url;
+    } else {
+      console.log("No se recibió archivo para subir a Cloudinary.");
+    }
+
     const { nombre, descripcion, precio, stock, categoria, activo } = req.body;
 
-    // Opcional: convierte precio, stock, activo a tipo número/booleano si hace falta
     const datos = {
       nombre,
       descripcion,
       precio: precio ? parseFloat(precio) : null,
       stock: stock ? parseInt(stock) : null,
       categoria,
-      activo: activo !== undefined ? Boolean(Number(activo)) : true, // o true por defecto
-      imagen_url
+      activo: activo !== undefined ? Boolean(Number(activo)) : true,
+      imagen_url,
     };
 
-    // Verificación básica
     if (!nombre) throw new Error("El nombre del producto es obligatorio");
 
     const producto = await ProductoService.RegistrarProductos(datos);
+
     return res.status(201).json({
       message: "Producto creado exitosamente",
-      producto
+      producto,
     });
   } catch (error) {
+    console.log("Error general en CrearProductoController:", error); // 👈
     return next(error);
   }
 }
@@ -43,12 +59,12 @@ export async function ListarProductosController(req, res, next) {
     const total = await ProductoModel.ContarProductos();
 
     res.status(200).json({
-      message: 'Listado de productos',
+      message: "Listado de productos",
       productos,
       total,
       limit,
       offset,
-      hasMore: offset + productos.length < total
+      hasMore: offset + productos.length < total,
     });
   } catch (error) {
     next(error);
@@ -73,7 +89,7 @@ export async function BorrarProductoController(req, res, next) {
     const { id } = req.params;
     await ProductoService.BorrarProducto(id);
     res.status(200).json({
-      message: "Producto eliminado"
+      message: "Producto eliminado",
     });
   } catch (error) {
     next(error);
@@ -83,12 +99,24 @@ export async function BorrarProductoController(req, res, next) {
 // listo
 export async function SubirImagenProductoController(req, res, next) {
   try {
-    const imagen_url = `/products/${req.file.filename}`;
+    let imagen_url = null;
+    if (req.file) {
+      const result = await new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: "productos" }, (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          })
+          .end(req.file.buffer);
+      });
+      imagen_url = result.secure_url;
+    }
+
     const { id } = req.params;
     await ProductoService.ModificarProductos(id, { imagen_url });
     res.status(200).json({
       message: "Imagen de producto subida correctamente",
-      imagen_url
+      imagen_url,
     });
   } catch (err) {
     next(err);

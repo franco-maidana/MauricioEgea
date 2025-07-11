@@ -13,3 +13,5 @@ const storage = multer.diskStorage({
 
 const upLoadProductImage = multer({ storage });
 export default upLoadProductImage;
+
+// subir archivo a carpeta local funciona pero vamos a mejorarla, eliminar despues que quede todo ok 
