@@ -1,5 +1,6 @@
 import * as UsuarioService from "../services/Usuarios.service.js";
 import * as UsuarioModel from '../models/Usuario.model.js'
+import cloudinary from 'cloudinary';
 
 // listo
 export async function CrearUsuarioControllers(req, res, next) {
@@ -52,12 +53,32 @@ export async function ModificarUsuarioControllers(req, res, next) {
 // listo
 export async function ActualizarAvatarController(req, res, next) {
   try {
-    // Path relativo para guardar en la base de datos
-    const avatar_url = `/avatars/${req.file.filename}`;
     const { id } = req.params;
+
+    if (!req.file) throw new Error("No se subió ninguna imagen");
+
+    // Subir a Cloudinary (buffer)
+    const resultado = await new Promise((resolve, reject) => {
+      cloudinary.v2.uploader.upload_stream(
+        {
+          folder: "usuarios", // opcional, carpeta en cloudinary
+          public_id: `avatar_${id}_${Date.now()}`,
+        },
+        (err, result) => {
+          if (err) return reject(err);
+          resolve(result);
+        }
+      ).end(req.file.buffer);
+    });
+
+    // Guardar URL en la base de datos
+    const avatar_url = resultado.secure_url;
+
     await UsuarioService.ModificarUsuario(id, { avatar_url });
+
     res.status(201).json({
       message: "Imagen de perfil actualizada exitosamente",
+      avatar_url,
     });
   } catch (err) {
     next(err);
