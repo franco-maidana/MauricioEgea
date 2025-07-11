@@ -6,14 +6,14 @@ import {
   ModificarProductoController,
   SubirImagenProductoController
 } from "../../controllers/Producto.controllers.js";
-import upLoadProductImage from "../../middlewares/upLoadProductImage.js";
+import uploadCloudinaryImage from "../../middlewares/uploadCloudinaryImage.js";
 
 const Productos = Router();
 
-Productos.post('/create', upLoadProductImage.single("imagen"), CrearProductoController);
+Productos.post('/create', uploadCloudinaryImage.single("imagen"), CrearProductoController);
 Productos.get('/list', ListarProductosController);
 Productos.put('/update/:id', ModificarProductoController);
-Productos.post("/upload-image/:id", upLoadProductImage.single("imagen"), SubirImagenProductoController);
+Productos.post("/upload-image/:id", uploadCloudinaryImage.single("imagen"), SubirImagenProductoController);
 Productos.delete('/destroi/:id', BorrarProductoController);
 
 export default Productos;
