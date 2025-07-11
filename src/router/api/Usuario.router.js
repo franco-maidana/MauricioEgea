@@ -6,7 +6,7 @@ import {
   ModificarUsuarioControllers,
   ActualizarAvatarController
 } from "../../controllers/Usuario.controllers.js";
-import uploadAvatar from "../../middlewares/upLoadAvatar.js";
+import uploadAvatar from "../../middlewares/upLoadAvatarCloudinary.js";
 
 const Usuario = Router()
 
